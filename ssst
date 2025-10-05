@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-gray-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMERJ RP - Central de Registros</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .tab-link.active-tab {
+            color: #2563eb; /* blue-600 */
+            border-color: #2563eb; /* blue-600 */
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        main {
+             animation: fadeIn 0.5s ease-in-out;
+        }
+        .modal-backdrop {
+            animation: fadeIn 0.3s ease-out;
+        }
+        .modal-content {
+            animation: slideInUp 0.3s ease-out;
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+    </style>
+</head>
+<body class="h-full text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="container mx-auto px-4 lg:px-6 py-4 flex items-center space-x-4">
+            <img src="https://s10.aconvert.com/convert/p3r68-cdx67/a6j8n-bxyvm.jpg" alt="Logo PMERJ" class="h-12 w-12" onerror="this.onerror=null;this.src='https://placehold.co/48x48/1e3a8a/ffffff?text=PMERJ';">
+            <div>
+                <h1 class="text-2xl font-bold text-blue-900">Central de Registros</h1>
+                <p class="text-gray-600">Polícia Militar do Estado do Rio de Janeiro - Roleplay</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-6">
+        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+            <div class="border-b border-gray-200 mb-6">
+                <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                    <button class="tab-link active-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg" data-tab="prisoes">Prisões</button>
+                    <button class="tab-link whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="apreensoes">Apreensões</button>
+                </nav>
+            </div>
+
+            <!-- Conteúdo da Aba Prisões -->
+            <div id="prisoes-tab" class="tab-content">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Registro de Prisão</h3>
+                <form id="form-prisao" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    <input type="text" name="policial" placeholder="Nome do Policial" class="p-2 border rounded-md w-full" required>
+                    <input type="date" name="dataOcorrencia" class="p-2 border rounded-md w-full text-gray-500" required>
+                    <input type="text" name="rgSuspeito" placeholder="RG do Suspeito" class="p-2 border rounded-md w-full" required>
+                    <input type="text" name="nomeSuspeito" placeholder="Nome do Suspeito" class="p-2 border rounded-md w-full" required>
+                    <input type="url" name="printUrl" placeholder="Link da Print (Imagem)" class="p-2 border rounded-md w-full md:col-span-2" required>
+                    <textarea name="relato" placeholder="Relato da Ocorrência" class="p-2 border rounded-md w-full md:col-span-2" rows="4" required></textarea>
+                    <button type="submit" class="md:col-span-2 bg-blue-700 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-800 transition-colors flex items-center justify-center space-x-2">
+                        <span>Registrar Prisão</span>
+                    </button>
+                </form>
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Prisões Registradas</h3>
+                <div class="relative mb-4">
+                    <input type="text" id="search-prisoes" placeholder="Buscar em prisões..." class="w-full p-2 pl-10 border rounded-md">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border">
+                        <thead class="bg-gray-200"><tr><th class="py-2 px-4 border-b">Data Ocorrência</th><th class="py-2 px-4 border-b">Policial</th><th class="py-2 px-4 border-b">Suspeito</th><th class="py-2 px-4 border-b">Relato</th><th class="py-2 px-4 border-b">Print</th></tr></thead>
+                        <tbody id="lista-prisoes"><tr><td colspan="5" class="text-center py-4 text-gray-500">Aguardando autenticação...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Conteúdo da Aba Apreensões -->
+            <div id="apreensoes-tab" class="tab-content hidden">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Registro de Apreensão</h3>
+                <form id="form-apreensao" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    <input type="text" name="policial" placeholder="Nome do Policial" class="p-2 border rounded-md w-full" required>
+                    <input type="date" name="dataOcorrencia" class="p-2 border rounded-md w-full text-gray-500" required>
+                    <textarea name="itens" placeholder="Itens Apreendidos (ex: 1x Fuzil AK-47, 50g de Cocaína)" class="p-2 border rounded-md w-full md:col-span-2" rows="3" required></textarea>
+                    <textarea name="local" placeholder="Local da Apreensão" class="p-2 border rounded-md w-full md:col-span-2" rows="2" required></textarea>
+                    <input type="url" name="printUrl" placeholder="Link da Print (Imagem)" class="p-2 border rounded-md w-full md:col-span-2" required>
+                    <button type="submit" class="md:col-span-2 bg-blue-700 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-800 transition-colors flex items-center justify-center space-x-2">
+                         <span>Registrar Apreensão</span>
+                    </button>
+                </form>
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Apreensões Registradas</h3>
+                 <div class="relative mb-4">
+                    <input type="text" id="search-apreensoes" placeholder="Buscar em apreensões..." class="w-full p-2 pl-10 border rounded-md">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border">
+                        <thead class="bg-gray-200"><tr><th class="py-2 px-4 border-b">Data Ocorrência</th><th class="py-2 px-4 border-b">Policial</th><th class="py-2 px-4 border-b">Itens</th><th class="py-2 px-4 border-b">Local</th><th class="py-2 px-4 border-b">Print</th></tr></thead>
+                        <tbody id="lista-apreensoes"><tr><td colspan="5" class="text-center py-4 text-gray-500">Aguardando autenticação...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Modal para Mensagem Discord -->
+    <div id="discord-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden modal-backdrop">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg modal-content">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-gray-800">Registro Concluído</h3>
+                    <button id="close-modal-btn" class="text-gray-400 hover:text-gray-600">&times;</button>
+                </div>
+                <p class="text-gray-600 mb-4">A mensagem abaixo está pronta para ser enviada no Discord.</p>
+                <div class="bg-gray-100 p-4 rounded-md border border-gray-200 mb-4">
+                    <pre id="discord-message" class="whitespace-pre-wrap text-sm font-sans"></pre>
+                </div>
+                <button id="copy-discord-msg-btn" class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors flex items-center justify-center space-x-2">
+                    <i data-lucide="copy" class="w-5 h-5"></i>
+                    <span>Copiar para Área de Transferência</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-green-600 text-white py-3 px-5 rounded-lg shadow-lg opacity-0 translate-y-10 transition-all duration-300 pointer-events-none"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, Timestamp, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        const App = {
+            db: null,
+            auth: null,
+            appId: null,
+            listenersAttached: false,
+            
+            async init() {
+                this.setupEventListeners();
+                lucide.createIcons();
+                this.initFirebase();
+                await this.handleAuth();
+            },
+
+            initFirebase() {
+                try {
+                    // =================================================================
+                    // COLE AQUI A CONFIGURAÇÃO DO SEU FIREBASE
+                    // Para hospedar este site, substitua os valores abaixo pelos
+                    // dados do seu projeto no console.firebase.google.com
+                    // =================================================================
+                    const firebaseConfig = {
+                      apiKey: "COLE_SUA_API_KEY_AQUI",
+                      authDomain: "SEU_PROJETO.firebaseapp.com",
+                      projectId: "SEU_PROJETO_ID",
+                      storageBucket: "SEU_PROJETO.appspot.com",
+                      messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+                      appId: "SEU_APP_ID",
+                    };
+
+                    // Defina um ID único para sua aplicação para isolar os dados.
+                    const appId = "pmerj-rp-roleplay";
+                    // =================================================================
+
+
+                    if (firebaseConfig.apiKey === "COLE_SUA_API_KEY_AQUI") {
+                        // Neste ambiente, usaremos a configuração fornecida externamente se disponível
+                        if (typeof __firebase_config !== 'undefined') {
+                            const externalConfig = JSON.parse(__firebase_config);
+                            const firebaseApp = initializeApp(externalConfig);
+                            this.db = getFirestore(firebaseApp);
+                            this.auth = getAuth(firebaseApp);
+                            this.appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                            return;
+                        } else {
+                           throw new Error("As credenciais do Firebase não foram configuradas. Edite o código para adicionar sua configuração.");
+                        }
+                    }
+                    
+                    this.appId = appId;
+                    const firebaseApp = initializeApp(firebaseConfig);
+                    this.db = getFirestore(firebaseApp);
+                    this.auth = getAuth(firebaseApp);
+                } catch (e) {
+                    console.error("Falha na inicialização do Firebase:", e);
+                    this.showErrorState(e.message || "Falha ao conectar com o servidor. A funcionalidade de registro está desativada.");
+                }
+            },
+
+            async handleAuth() {
+                if (!this.auth) return;
+
+                onAuthStateChanged(this.auth, (user) => {
+                    if (user) {
+                        console.log("Autenticado com UID:", user.uid);
+                        if (!this.listenersAttached) {
+                            this.setupFirestoreListeners();
+                            this.listenersAttached = true;
+                        }
+                    }
+                });
+
+                try {
+                    // Tenta autenticar com token customizado se disponível (ambiente da plataforma).
+                    // Caso contrário, usa autenticação anônima (para uso em Netlify, etc.).
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(this.auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(this.auth);
+                    }
+                } catch (error) {
+                    console.error("Falha na autenticação:", error);
+                    this.showErrorState("Falha na autenticação. Por favor, recarregue a página.");
+                }
+            },
+
+            setupEventListeners() {
+                document.querySelector('nav').addEventListener('click', (e) => {
+                    const tabLink = e.target.closest('.tab-link');
+                    if (!tabLink) return;
+                    document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active-tab'));
+                    tabLink.classList.add('active-tab');
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                    document.getElementById(`${tabLink.dataset.tab}-tab`).classList.remove('hidden');
+                });
+                document.getElementById('form-prisao').addEventListener('submit', (e) => this.handleFormSubmit(e, 'prisoes'));
+                document.getElementById('form-apreensao').addEventListener('submit', (e) => this.handleFormSubmit(e, 'apreensoes'));
+                const modal = document.getElementById('discord-modal');
+                document.getElementById('close-modal-btn').addEventListener('click', () => modal.classList.add('hidden'));
+                document.getElementById('copy-discord-msg-btn').addEventListener('click', () => this.copyDiscordMessage());
+                document.getElementById('search-prisoes').addEventListener('input', e => this.filterTable('lista-prisoes', e.target.value));
+                document.getElementById('search-apreensoes').addEventListener('input', e => this.filterTable('lista-apreensoes', e.target.value));
+            },
+            
+            setupFirestoreListeners() {
+                this.listenToCollection('prisoes', this.renderPrisoes);
+                this.listenToCollection('apreensoes', this.renderApreensoes);
+            },
+            
+            async handleFormSubmit(e, collectionName) {
+                e.preventDefault();
+                const form = e.target;
+                const button = form.querySelector('button[type="submit"]');
+                this.toggleButtonLoading(button, true);
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                data.createdAt = Timestamp.now();
+                
+                try {
+                    const collectionRef = collection(this.db, 'artifacts', this.appId, 'public', 'data', collectionName);
+                    await addDoc(collectionRef, data);
+                    this.showToast(`${collectionName === 'prisoes' ? 'Prisão' : 'Apreensão'} registrada!`);
+                    this.generateAndShowDiscordMessage(data, collectionName);
+                    form.reset();
+                } catch (error) {
+                    console.error(`Erro ao adicionar documento em ${collectionName}:`, error);
+                    this.showToast(`Erro ao registrar. Verifique o console para mais detalhes.`, true);
+                } finally {
+                    this.toggleButtonLoading(button, false);
+                }
+            },
+            
+            listenToCollection(collectionName, renderFn) {
+                if (!this.db) return;
+                const q = query(collection(this.db, 'artifacts', this.appId, 'public', 'data', collectionName), orderBy('createdAt', 'desc'), limit(50));
+                onSnapshot(q, (snapshot) => renderFn.call(this, snapshot), (error) => {
+                    console.error(`Erro ao escutar ${collectionName}:`, error);
+                    this.showToast(`Erro ao carregar dados de ${collectionName}.`, true);
+                    document.querySelector(`#lista-${collectionName}`).innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-500">Erro de permissão ao carregar registros.</td></tr>`
+                });
+            },
+
+            renderPrisoes(snapshot) {
+                const tbody = document.getElementById('lista-prisoes');
+                this.renderTable(tbody, snapshot, (data) => {
+                    const dataOcorrencia = data.dataOcorrencia ? data.dataOcorrencia.split('-').reverse().join('/') : 'N/A';
+                    return `
+                        <td class="py-2 px-4">${dataOcorrencia}</td>
+                        <td class="py-2 px-4">${this.sanitize(data.policial)}</td>
+                        <td class="py-2 px-4">${this.sanitize(data.nomeSuspeito)} (RG: ${this.sanitize(data.rgSuspeito)})</td>
+                        <td class="py-2 px-4 text-sm">${this.sanitize(data.relato)}</td>
+                        <td class="py-2 px-4"><a href="${this.sanitize(data.printUrl)}" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-1 text-blue-600 hover:underline"><i data-lucide="camera" class="w-4 h-4"></i><span>Ver</span></a></td>
+                    `;
+                }, 5);
+            },
+            
+            renderApreensoes(snapshot) {
+                const tbody = document.getElementById('lista-apreensoes');
+                this.renderTable(tbody, snapshot, (data) => {
+                    const dataOcorrencia = data.dataOcorrencia ? data.dataOcorrencia.split('-').reverse().join('/') : 'N/A';
+                    return `
+                        <td class="py-2 px-4">${dataOcorrencia}</td>
+                        <td class="py-2 px-4">${this.sanitize(data.policial)}</td>
+                        <td class="py-2 px-4">${this.sanitize(data.itens)}</td>
+                        <td class="py-2 px-4">${this.sanitize(data.local)}</td>
+                        <td class="py-2 px-4"><a href="${this.sanitize(data.printUrl)}" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-1 text-blue-600 hover:underline"><i data-lucide="camera" class="w-4 h-4"></i><span>Ver</span></a></td>
+                    `;
+                }, 5);
+            },
+
+            renderTable(tbody, snapshot, rowTemplateFn, colspan) {
+                tbody.innerHTML = '';
+                if (snapshot.empty) {
+                    tbody.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-4 text-gray-500">Nenhum registro encontrado.</td></tr>`;
+                    return;
+                }
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const tr = document.createElement('tr');
+                    tr.className = 'border-b hover:bg-gray-50';
+                    tr.innerHTML = rowTemplateFn(data);
+                    tbody.appendChild(tr);
+                });
+                lucide.createIcons();
+            },
+            
+            filterTable(tbodyId, searchTerm) {
+                const tbody = document.getElementById(tbodyId);
+                const rows = tbody.getElementsByTagName('tr');
+                const term = searchTerm.toLowerCase();
+                for (const row of rows) {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(term) ? '' : 'none';
+                }
+            },
+
+            generateAndShowDiscordMessage(data, type) {
+                let message = '';
+                const dataOcorrencia = data.dataOcorrencia ? data.dataOcorrencia.split('-').reverse().join('/') : 'N/A';
+                if (type === 'prisoes') {
+                    message = `**REGISTRO DE PRISÃO**\n\n` +
+                              `👮‍♂️ **Policial:** ${data.policial}\n` +
+                              `👤 **Suspeito:** ${data.nomeSuspeito} (RG: ${data.rgSuspeito})\n` +
+                              `📅 **Data da Ocorrência:** ${dataOcorrencia}\n` +
+                              `📝 **Relato:** ${data.relato}\n` +
+                              `📸 **Evidência:** ${data.printUrl}`;
+                } else {
+                    message = `**REGISTRO DE APREENSÃO**\n\n` +
+                              `👮‍♂️ **Policial:** ${data.policial}\n` +
+                              `📅 **Data da Ocorrência:** ${dataOcorrencia}\n` +
+                              `📦 **Itens Apreendidos:** ${data.itens}\n` +
+                              `📍 **Local:** ${data.local}\n` +
+                              `📸 **Evidência:** ${data.printUrl}`;
+                }
+                document.getElementById('discord-message').textContent = message;
+                document.getElementById('discord-modal').classList.remove('hidden');
+            },
+
+            copyDiscordMessage() {
+                const message = document.getElementById('discord-message').textContent;
+                navigator.clipboard.writeText(message).then(() => {
+                    this.showToast('Mensagem copiada com sucesso!');
+                }, (err) => {
+                    this.showToast('Erro ao copiar a mensagem.', true);
+                    console.error('Could not copy text: ', err);
+                });
+            },
+
+            toggleButtonLoading(button, isLoading) {
+                if (isLoading) {
+                    button.disabled = true;
+                    button.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 R 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Registrando...`;
+                } else {
+                    button.disabled = false;
+                    button.innerHTML = `<span>${button.textContent.replace('Registrando...', '').trim()}</span>`;
+                    const originalText = button.closest('form').id === 'form-prisao' ? 'Registrar Prisão' : 'Registrar Apreensão';
+                    button.querySelector('span').textContent = originalText;
+                }
+            },
+
+            showToast(message, isError = false) {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.className = `fixed bottom-5 right-5 text-white py-3 px-5 rounded-lg shadow-lg transition-all duration-300 pointer-events-none ${isError ? 'bg-red-600' : 'bg-green-600'}`;
+                toast.classList.remove('opacity-0', 'translate-y-10');
+                setTimeout(() => toast.classList.add('opacity-0', 'translate-y-10'), 3000);
+            },
+            
+            showErrorState(message) {
+                 document.querySelector('main').innerHTML = `<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert"><p class="font-bold">Erro Crítico</p><p>${message}</p></div>`;
+            },
+            
+            sanitize: (str) => (str ? new DOMParser().parseFromString(str, 'text/html').body.textContent : '')
+        };
+
+        document.addEventListener('DOMContentLoaded', () => App.init());
+    </script>
+</body>
+</html>
+
